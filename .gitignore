@@ -1,0 +1,17 @@
+.ipynb_checkpoints
+.DS_Store
+.vscode
+__pycache__
+input/**
+.idea/**
+input/**
+twitter/**
+logs/**
+old_logs/**
+old_run/**
+trained/**
+*.csv
+*.h5
+*.pkl
+*.txt
+*.yaml
