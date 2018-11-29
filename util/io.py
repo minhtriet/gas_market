@@ -34,6 +34,12 @@ def _join_path(*filename):
     return os.path.join(base_path, *filename)
 
 
+def _immediate_subdir(a_dir):
+    for name in os.listdir(a_dir):
+        if os.path.isdir(os.path.join(a_dir, name)) and not name.startswith('_'):   # switch to disable loading a folder
+            yield name
+
+
 def read_train(key):
     return pd.read_hdf(_join_path(config['train_file']), key=str(key))
 
@@ -42,10 +48,10 @@ def save_df(df, filename, key):
     df.to_hdf(_join_path(filename), key=key)
 
 
-def read_spot_market():
+def read_spot_market(market):
     try:
         spot = pd.read_hdf(_join_path('Mappe1.h5'), key='spot')
-        spot = spot.rename(columns={'GPL': 0})
+        spot = spot.rename(columns={market: 'price'})
         spot = spot.set_index(pd.DatetimeIndex(spot['Tradingday']))
         spot.drop('Tradingday', axis=1, inplace=True)
     except (FileNotFoundError, KeyError):
@@ -58,6 +64,15 @@ def read_spot_market():
         spot.Tradingday = pd.to_datetime(spot.Tradingday, dayfirst=True)
         spot.to_hdf(_join_path('Mappe1.h5'), key='spot')
     return spot
+
+
+def read_spot_market_v2(market):
+    df = pd.read_csv(_join_path('TRP-EGSI.csv'), delimiter=';')
+    df = df.rename(columns={'Handelstag': 'Tradingday'})
+    df['Tradingday'] = pd.to_datetime(df['Tradingday'], format='%m/%d/%y')
+    df = df.set_index(pd.DatetimeIndex(df['Tradingday']))
+    df = df.rename(columns={market: 'price'})
+    return df
 
 
 def read_future_market_v2(market):
@@ -132,23 +147,25 @@ def load_stock(from_date, to_date):
     return df
 
 
-def load_news(embed):
-    subdir = 'old_logs/guardian/'
-    df = pd.read_csv(os.path.join(subdir, 'data.csv'))
-    df = df.dropna(subset=['info'])
-    df = df.drop_duplicates(subset=['info'])
-    df['pub_date'] = df['pub_date'].map(lambda x: pd.to_datetime(x).date())
-    df = df.set_index('pub_date')
-    info_series = df.groupby(df.index)['info'].apply(lambda x: '. '.join(x))
-    if embed:
-        info_series = info_series.map(filter.preprocess)
-        num_column = len(info_series.head(1).values[0])
-    else:
-        num_column = 1
-    data = info_series.values.tolist()
-    info_df = pd.DataFrame(data=data, index=info_series.index, columns=range(num_column))
-    info_df.index = pd.to_datetime(info_df.index)
-    return info_df
+def load_news(embed=True):
+    big_info_df = pd.DataFrame()
+    for subdir in _immediate_subdir('old_logs'):
+        df = pd.read_csv(os.path.join('old_logs', subdir, 'data.csv'))
+        df = df.dropna(subset=['info'])
+        df = df.drop_duplicates(subset=['info'])
+        df['pub_date'] = df['pub_date'].map(lambda x: pd.to_datetime(x).date())
+        df = df.set_index('pub_date')
+        info_series = df.groupby(df.index)['info'].apply(lambda x: '. '.join(x))
+        if embed:
+            info_series = info_series.map(filter.preprocess)
+            num_column = len(info_series.head(1).values[0])
+        else:
+            num_column = 1
+        data = info_series.values.tolist()
+        info_df = pd.DataFrame(data=data, index=info_series.index, columns=range(num_column))
+        info_df.index = pd.to_datetime(info_df.index)
+        big_info_df = big_info_df.append(info_df)
+    return big_info_df
 
 
 base_path = ''
