@@ -15,3 +15,6 @@ trained/**
 *.pkl
 *.txt
 *.yaml
+lib/**
+kg/*.xml
+kg/*.owl
