@@ -147,10 +147,10 @@ def load_stock(from_date, to_date):
     return df
 
 
-def load_news(embed=True):
+def load_news(embed=True, filename='data.csv'):
     big_info_df = pd.DataFrame()
     for subdir in _immediate_subdir('old_logs'):
-        df = pd.read_csv(os.path.join('old_logs', subdir, 'data.csv'))
+        df = pd.read_csv(os.path.join('old_logs', subdir, filename))
         df = df.dropna(subset=['info'])
         df = df.drop_duplicates(subset=['info'])
         df['pub_date'] = df['pub_date'].map(lambda x: pd.to_datetime(x).date())

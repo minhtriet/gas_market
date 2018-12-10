@@ -3,6 +3,7 @@ import subprocess
 def create_input():
     # read all news paper, extract abstract or info
     # return triplet with properties
+    pass
 
 
 def process_entity_relations(entity_relations_str):
@@ -14,4 +15,4 @@ def process_entity_relations(entity_relations_str):
 
 create_input()
 subprocess.call(['java', '-jar', 'Blender.jar'])
-classify_envents
+# classify_envents
