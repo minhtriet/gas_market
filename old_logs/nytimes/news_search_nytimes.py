@@ -1,5 +1,5 @@
 import argparse
-
+import json
 import requests
 from pandas import date_range
 
@@ -15,5 +15,6 @@ args = parser.parse_args()
 for day in date_range(args.from_day, args.to_day, freq='M'):
     r = requests.get('https://api.nytimes.com/svc/archive/v1/%s/%s.json' % (day.year, day.month), params=payload)
     with open('raw/news_%s.json' % day.date(), 'w', encoding='utf-8') as outfile:
-        outfile.write(r._content.decode('utf-8'))
+        content = r.json()
+        outfile.write(json.dumps(content['response']['docs']))
         print(day.date())

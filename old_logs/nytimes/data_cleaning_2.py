@@ -1,39 +1,34 @@
 import glob
 import json
 import re
-from os.path import basename
-
 import pandas as pd
 
 
-def _is_keywords_in_string(keywords, s):
-    if s is None:
-        return False
-    return any(re.search(r"\b" + re.escape(x) + r"\b", s) for x in keywords)
-
-
-def abstract_headline_integrate():
+def read():
     for i in glob.glob('raw/*.json'):
         print(i)
         processed = []
         with open(i, encoding='utf8') as infile:
             month_news = json.loads(infile.read())
-            for article in month_news['response']['docs']:
-                if 'headline' in article and len(article['headline']) > 0 and 'lead_paragraph' in article:
-                    article['headline']['main'].append(' ').append(article['lead_paragraph'])
-                    processed.append(article)
-        with open('temp_%s' % basename(i), 'w', encoding='utf-8') as outfile:
-            json.dump(processed, outfile)
+            for article in month_news:
+                if 'main' not in article['headline'] or article['headline']['main'] is None:
+                    continue
+                if 'lead_paragraph' in article and article['lead_paragraph'] is not None:
+                    article['headline']['main'] += '. ' + article['lead_paragraph']
+                if 'seo' in article['headline'] and article['headline']['seo'] is not None:
+                    article['headline']['main'] += '. ' + article['headline']['seo']
+                article['headline']['main'] = re.sub('\t|\n|^"|"$', '', article['headline']['main'])
+                processed.append(article)
+        break
+    return processed
 
 
-abstract_headline_integrate()
-news = pd.DataFrame()
-for filename in glob.glob('*.json'):
-    news = news.append(pd.read_json(filename), sort=True)
-news = news.set_index('pub_date')
-# news['info'] = news['abstract'].fillna(news['lead_paragraph']).fillna(news['snippet'])
+all_json = read()
+news = pd.read_json(json.dumps(all_json))
+# news = news.set_index('pub_date')
+news = news.set_index('_id')
 news['info'] = [x['main'] for x in news.headline.values]
-news = news[['info', 'abstract', 'headline', 'lead_paragraph', 'snippet', 'keywords']]
+news = news[['info']]
 news.dropna(inplace=True, subset=['info'])
 # news['info'].str.split('.')[0]
-news.to_csv('data.csv')
+news.to_csv('data_exp.csv', sep='\t')

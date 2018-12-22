@@ -57,21 +57,6 @@ def clean_data():
             json.dump(processed, outfile)
 
 
-def investigate_headline():
-    for i in glob.glob('raw/*.json'):
-        print(i)
-        processed = []
-        with open(i, encoding='utf8') as infile:
-            month_news = json.loads(infile.read())
-            for article in month_news['response']['docs']:
-                if 'headline' in article and len(article['headline']) > 0:
-                    for headline_subkey in article['headline'].keys():
-                        article['headline_%s' % headline_subkey] = article['headline'][headline_subkey]
-                    processed.append(article)
-        with open('temp_%s' % basename(i), 'w', encoding='utf-8') as outfile:
-            json.dump(processed, outfile)
-
-
 # clean_data()
 news = pd.DataFrame()
 for i in glob.glob('*.json'):
