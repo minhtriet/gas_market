@@ -1,6 +1,7 @@
 import sys
 
-sys.path.append('../../')
+# meant to be execute in project root
+sys.path.append('.')
 from util import io
 from sklearn.feature_extraction.text import TfidfVectorizer
 import subprocess
@@ -20,6 +21,8 @@ def clean_and_transform(document):
 
 train_news_fn = 'train_news.txt'
 test_news_fn = 'test_news.txt'
+train_events_fn = 'reverb_train_news.txt'
+train_events_fn = 'reverb_test_news.txt'
 base_path = path.join('exp', 'ding2014')
 # reverb
 if not path.isfile(train_news_fn):
@@ -38,10 +41,12 @@ print("start")
 subprocess.call(path.join(base_path, 'extract.sh ') + train_news_fn, shell=True)
 subprocess.call(path.join(base_path, 'extract.sh ') + test_news_fn, shell=True)
 
+# convert to word embedding
+with open(train_events_fn) as f:
+    train_events = f.read()
 transformer = clean_and_transform(train_news)
 transformer.transform(train_news)
 transformer.transform(test_news)
 print("end")
-# convert to word embedding
 
 # convert news word embedding to event embedding
