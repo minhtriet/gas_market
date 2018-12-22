@@ -29,15 +29,17 @@ def baseline_crf(train_percentage, sft, future, embed=True):
     return x_train, x_test, y_train, y_test
 
 
-def generate(window, stride, predict_length, future, save_scaler=False, train_percentage=0.6, embed=True):
+def generate(window, stride, predict_length, future, save_scaler=False, train_percentage=0.6, embed=True,
+             isRegress=True):
     """
     :param window: length of the predict data
     :param stride: stride
     :param predict_length: how much days will be predicted
     :param save_scaler: save scaler to be used later in reference
-    :param future:
+    :param future: read future or spot market
     :param train_percentage: train test split
     :param embed: embed the news or full text
+    :param isRegress: False if classification
     :return: x_train, y_train, x_test, y_test
     """
     if future:
@@ -57,8 +59,15 @@ def generate(window, stride, predict_length, future, save_scaler=False, train_pe
     train.fillna(0, inplace=True)
     split = int(len(train) * train_percentage)
 
-    train['price'][:split] = future_price_scaler.fit_transform(train['price'][:split].values.reshape(-1, 1)).squeeze()
-    train['price'][split:] = future_price_scaler.transform(train['price'][split:].values.reshape(-1, 1)).squeeze()
+    if isRegress:
+        # train['price'][:split] = future_price_scaler.fit_transform(train['price'][:split].values.reshape(-1, 1)).squeeze()
+        # train['price'][split:] = future_price_scaler.transform(train['price'][split:].values.reshape(-1, 1)).squeeze()
+        train.loc[:split, 'price'] = future_price_scaler.fit_transform(
+            train['price'][:split].values.reshape(-1, 1)).squeeze()
+        train.loc[split:, 'price'] = future_price_scaler.transform(
+            train['price'][split:].values.reshape(-1, 1)).squeeze()
+    else:
+        train['price'] = train['price'].shift(1)
     train = np.array(train)
     # scaled_ = np.concatenate((scaled_, future_price_scaler.transform(train[split:])))
     x = np.array([train[i:i + window] for i in range(0, len(train) - window, stride)])

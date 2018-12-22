@@ -1,6 +1,7 @@
 import spacy
 
-nlp = spacy.load('en_core_web_lg', disable=['ner'])
+# nlp = spacy.load('en_core_web_lg', disable=['ner'])
+nlp = spacy.load('en')
 nlp.vocab.add_flag(lambda s: s in spacy.lang.en.stop_words.STOP_WORDS, spacy.attrs.IS_STOP)
 
 
