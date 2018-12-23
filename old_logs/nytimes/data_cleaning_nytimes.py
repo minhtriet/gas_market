@@ -57,13 +57,17 @@ def clean_data():
             json.dump(processed, outfile)
 
 
+print('Clean data bgein')
 clean_data()
+print('Clean data finished')
 news = pd.DataFrame()
 for i in glob.glob('*.json'):
-    news = news.append(pd.read_json(i), sort=True)
+    print(i)
+    news = news.append(pd.read_json(i))
+print('concatenate news completed')
 news = news.set_index('pub_date')
-# news['info'] = news['abstract'].fillna(news['lead_paragraph']).fillna(news['snippet'])
-news['info'] = [x['main'] for x in news.headline.values]
+news['info'] = news['abstract'].fillna(news['lead_paragraph']).fillna(news['snippet'])
+# news['info'] = [x['main'] for x in news.headline.values]
 news = news[['info', 'abstract', 'headline', 'lead_paragraph', 'snippet', 'keywords']]
 news.dropna(inplace=True, subset=['info'])
 # news['info'].str.split('.')[0]
