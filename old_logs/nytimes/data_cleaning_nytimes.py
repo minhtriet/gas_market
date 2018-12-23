@@ -26,7 +26,7 @@ def clean_data():
         processed = []
         with open(i, encoding='utf8') as infile:
             month_news = json.loads(infile.read())
-            for article in month_news['response']['docs']:
+            for article in month_news:
                 # absolutely weed these out
                 if 'headline' in article and len(article['headline']) > 0:
                     if 'kicker' in article['headline']:
@@ -57,7 +57,7 @@ def clean_data():
             json.dump(processed, outfile)
 
 
-# clean_data()
+clean_data()
 news = pd.DataFrame()
 for i in glob.glob('*.json'):
     news = news.append(pd.read_json(i), sort=True)
