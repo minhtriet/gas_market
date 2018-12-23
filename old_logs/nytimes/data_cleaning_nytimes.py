@@ -57,7 +57,9 @@ def clean_data():
             json.dump(processed, outfile)
 
 
-# clean_data()
+print('Clean data bgein')
+clean_data()
+print('Clean data finished')
 news = pd.DataFrame()
 for i in glob.glob('*.json'):
     news = news.append(pd.read_json(i), sort=True)
