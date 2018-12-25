@@ -49,8 +49,12 @@ def generate(window, stride, predict_length, future, save_scaler=False, train_pe
     news = io.load_news(embed)
     # the training label, don't scale
     original_price = np.array(train.values).squeeze()
-    y = np.array(
-        [original_price[i:i + predict_length] for i in range(window, len(original_price) - predict_length, stride)])
+    if isRegress:
+        y = np.array(
+            [original_price[i:i + predict_length] for i in range(window, len(original_price) - predict_length, stride)])
+    else:
+        original_price = original_price[1:] - original_price[0:-1]
+        y = np.array([original_price[i] for i in range(window, len(original_price) - predict_length, stride)])
 
     # do not scale one hot encoding for now, scale later and see if things change, try to explain, gives out the source
     # is data rich enough to form a triplet or knowledge graph, (also for linked news)
@@ -59,15 +63,11 @@ def generate(window, stride, predict_length, future, save_scaler=False, train_pe
     train.fillna(0, inplace=True)
     split = int(len(train) * train_percentage)
 
-    if isRegress:
-        # train['price'][:split] = future_price_scaler.fit_transform(train['price'][:split].values.reshape(-1, 1)).squeeze()
-        # train['price'][split:] = future_price_scaler.transform(train['price'][split:].values.reshape(-1, 1)).squeeze()
-        train.loc[:split, 'price'] = future_price_scaler.fit_transform(
-            train['price'][:split].values.reshape(-1, 1)).squeeze()
-        train.loc[split:, 'price'] = future_price_scaler.transform(
-            train['price'][split:].values.reshape(-1, 1)).squeeze()
-    else:
-        train['price'] = train['price'].shift(1)
+    train.loc[:split, 'price'] = future_price_scaler.fit_transform(
+        train['price'][:split].values.reshape(-1, 1)).squeeze()
+    train.loc[split:, 'price'] = future_price_scaler.transform(
+        train['price'][split:].values.reshape(-1, 1)).squeeze()
+
     train = np.array(train)
     # scaled_ = np.concatenate((scaled_, future_price_scaler.transform(train[split:])))
     x = np.array([train[i:i + window] for i in range(0, len(train) - window, stride)])

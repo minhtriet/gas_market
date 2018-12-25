@@ -6,6 +6,7 @@ from util import io
 from sklearn.feature_extraction.text import TfidfVectorizer
 import subprocess
 from os import path
+import pickle
 
 
 def clean_and_transform(document):
@@ -29,10 +30,7 @@ def parse_reverb(documents):
     for d in documents:
         d = d.split('\t')        
         if len(d) == 18:
-            print('S V O')
-            events.append([' '.join([d[2], d[3], d[4]])])
-        else:
-            events.append([' '.join([d[2], d[3]])])
+            events.append(' '.join([d[2], d[3], d[4]]))
     return events
 
 
@@ -40,8 +38,10 @@ train_news_fn = 'train_news.txt'
 test_news_fn = 'test_news.txt'
 train_events_fn = 'reverb_train_news.txt'
 test_events_fn = 'reverb_test_news.txt'
+tfidf_train_events_fn = 'tfidf_test_events.txt'
+tfidf_test_events_fn = 'tfidf_train_events.txt'
 # reverb
-if not path.isfile(train_news_fn):
+if not path.isfile(join(train_news_fn)):
     print('Extracting news')
     news = io.load_news(False)
     length_news = len(news)
@@ -60,22 +60,15 @@ if path.isfile(train_events_fn) and path.isfile(test_events_fn):
     subprocess.call(join('extract.sh ') + join(test_news_fn) + ' ' + join(test_events_fn), shell=True)
 
 # convert to tfidf
-with open(join(train_events_fn)) as f:
+with open(join(train_events_fn), encoding="utf-8") as f:
     train_events = f.read()
     train_events = train_events.split('\n')
     train_events = parse_reverb(train_events)
-with open(test_events_fn) as  f:
-    test_events = f.read()
-    test_events = test_events.split('\n')
-    test_events = parse_reverb(train_events)
+# with open(join(test_events_fn), encoding="utf-8") as f:
+#     test_events = f.read()
+#     test_events = test_events.split('\n')
+#     test_events = parse_reverb(test_events)
 transformer = clean_and_transform(train_events)
-
-with open(tfidf_train_events, 'w') as f:
-    f.write(transformer.transform(train_news))
-
-with open(tfidf_test_events, 'w') as f:
-    f.write(transformer.transform(train_news))
-transformer.transform(test_news)
-print("end")
-
-# convert news word embedding to event embedding
+print("save transformer")
+with open(join('tfidf.pkl'), 'wb') as f:
+    pickle.dump(transformer, f)
