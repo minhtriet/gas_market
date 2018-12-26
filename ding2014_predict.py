@@ -1,13 +1,9 @@
 import pickle
 from os import path
-
 import numpy
 from keras.layers import Dense, Flatten
 from keras.models import Sequential
-
 from util import data_generator
-
-# sys.path.append(path.join('exp', 'ding2014'))
 
 
 print('Model finished')
