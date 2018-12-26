@@ -24,12 +24,14 @@ y_train = numpy.array(y_train > 0, dtype=int)
 shape_2, shape_3 = transformer.transform(x_train[0, :, 1]).toarray().shape
 tf_xtrain = numpy.empty(shape=(x_train.shape[0], shape_2, shape_3))
 tf_xtest = numpy.empty(shape=(x_test.shape[0], shape_2, shape_3))
+print("Train samples: %d" % x_train.shape[0])
+print("Test samples: %d" % x_test.shape[0])
 for i in range(x_train.shape[0]):
     tf_xtrain[i] = transformer.transform(x_train[i, :, 1]).toarray()
 for i in range(x_test.shape[0]):
     tf_xtest[i] = transformer.transform(x_test[i, :, 1]).toarray()
 print('Transform finished')
-batch_size = 32
+batch_size = 16
 
 numpy.random.seed(7)
 # create model
@@ -40,6 +42,6 @@ model.add(Flatten())
 model.add(Dense(1, activation='softmax'))
 model.compile(loss='binary_crossentropy', optimizer='adam', metrics=['accuracy'])
 model.summary()
-model.fit(tf_xtrain, y_train)
+model.fit_generator(tf_xtrain, y_train)
 model.save('ding2014.h5')
 model.predict(tf_xtest, y_test)
