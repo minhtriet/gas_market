@@ -28,11 +28,13 @@ for pred_length in range(1, 7):
         y_test = np.array(y_test > 0, dtype=int)
         y_train = np.array(y_train > 0, dtype=int)
     # Statistik
-    unique, counts = np.unique(y_train, return_counts=True)
-    print(dict(zip(unique, counts)))
+    if not args.is_regress:
+        unique, counts = np.unique(y_train, return_counts=True)
+        print(dict(zip(unique, counts)))
     print(np.random.choice(y_train[0], 5))
-    unique, counts = np.unique(y_test, return_counts=True)
-    print(dict(zip(unique, counts)))
+    if not args.is_regress:
+        unique, counts = np.unique(y_test, return_counts=True)
+        print(dict(zip(unique, counts)))
     print(np.random.choice(y_test[0], 5))
     # End
     shape_2, shape_3 = transformer.transform(x_train[0, :, 1]).toarray().shape
@@ -49,12 +51,12 @@ for pred_length in range(1, 7):
     # create model
     if args.is_regress:
         model = Sequential()
-        model.add(Dense(32, input_shape=(shape_2 * shape_3,), activation='relu'))
-        model.add(Dense(2, activation='relu'))
+        model.add(Dense(1024, input_shape=(shape_2 * shape_3,), activation='relu'))
+        model.add(Dense(256, activation='relu'))
         model.add(Dense(pred_length))
-        model.compile(loss='mse', optimizer='adam', metrics=['accuracy'])
+        model.compile(loss='mse', optimizer='adam', metrics=['mse'])
         model.summary()
-        model.fit(tf_xtrain, y_train, validation_data=(tf_xtest, y_test), batch_size=batch_size, epochs=5)
+        model.fit(tf_xtrain, y_train, validation_data=(tf_xtest, y_test), batch_size=batch_size, epochs=32)
         model.save('ding2014.h5')
     else:
         model = Sequential()
