@@ -53,7 +53,7 @@ def generate(window, stride, predict_length, future=True, save_scaler=False, tra
         y = np.array(
             [original_price[i:i + predict_length] for i in range(window, len(original_price) - predict_length, stride)])
     else:
-        original_price = original_price[1:] - original_price[0:-1]
+        original_price = original_price[predict_length:] - original_price[0:-predict_length]
         y = np.array([original_price[i] for i in range(window, len(original_price) - predict_length, stride)])
 
     # do not scale one hot encoding for now, scale later and see if things change, try to explain, gives out the source
