@@ -30,7 +30,7 @@ def baseline_crf(train_percentage, sft, future, embed=True):
 
 
 def generate(window, stride, predict_length, future=True, save_scaler=False, train_percentage=0.6, embed=True,
-             isRegress=True):
+             is_regress=True):
     """
     :param window: length of the predict data
     :param stride: stride
@@ -39,7 +39,7 @@ def generate(window, stride, predict_length, future=True, save_scaler=False, tra
     :param future: read future or spot market
     :param train_percentage: train test split
     :param embed: embed the news or full text
-    :param isRegress: False if classification
+    :param is_regress: False if classification
     :return: x_train, y_train, x_test, y_test
     """
     if future:
@@ -49,7 +49,7 @@ def generate(window, stride, predict_length, future=True, save_scaler=False, tra
     news = io.load_news(embed)
     # the training label, don't scale
     original_price = np.array(train.values).squeeze()
-    if isRegress:
+    if is_regress:
         y = np.array(
             [original_price[i:i + predict_length] for i in range(window, len(original_price) - predict_length, stride)])
     else:
