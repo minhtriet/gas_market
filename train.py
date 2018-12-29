@@ -45,24 +45,23 @@ def run_lstm(d, x_train, x_test, y_train, y_test):
     return model
 
 
-parser = argparse.ArgumentParser(description='data related parameters')
-parser.add_argument('--reset_state_window', help='Reset state after this length has been reached for stateful lstm',
-                    default=30)
-parser.add_argument('--stride', type=int, default=5)
-parser.add_argument('--predict_length', type=int, default=3)
-args = parser.parse_args()
-
 with open('config.yaml') as stream:
     try:
         config = yaml.load(stream)
-        window = config['window']
-        x_train, x_test, y_train, y_test = data_generator.generate(window, future=True, train_percentage=0.6,
-                                                                   stride=args.stride,
-                                                                   predict_length=args.predict_length)
-        lstm_tf.train(x_train, y_train, x_test, y_test, time_steps=args.window, layer_shape=[128, 32],
-                      learning_rate=0.005,
-                      epoch=512, predict_length=args.predict_length)
     except yaml.YAMLError as exc:
         print(exc)
-# 24.10 add news
-# 30.10 lemmatize news
+parser = argparse.ArgumentParser(description='data related parameters')
+parser.add_argument('--reset_state_window', help='Reset state after this length stateful lstm', default=30)
+parser.add_argument('--stride', type=int, default=5)
+parser.add_argument('--predict_length', type=int, default=3)
+parser.add_argument('--embed', type=str, required=True, choices=args.embed)
+args = parser.parse_args()
+
+window = config['window']
+
+# spacy
+#x_train, x_test, y_train, y_test = data_generator.generate(window, future=True, train_percentage=0.6, stride=args.stride, predict_length=args.predict_length)
+# lstm_tf.train(x_train, y_train, x_test, y_test, time_steps=args.window, layer_shape=[128, 32], learning_rate=0.005, epoch=512, predict_length=args.predict_length)
+# fasttext
+x_train, x_test, y_train, y_test = data_generator.generate(window, future=True, train_percentage=0.6, stride=args.stride, embed='fasttext', predict_length=args.predict_length)
+lstm_tf.train(x_train, y_train, x_test, y_test, time_steps=args.window, layer_shape=[128, 32], learning_rate=0.005, epoch=512, predict_length=args.predict_length)

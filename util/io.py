@@ -147,8 +147,10 @@ def load_stock(from_date, to_date):
     return df
 
 
-def load_news(embed=True, filename='data.csv'):
+def load_news(embed, filename='data.csv'):
     big_info_df = pd.DataFrame()
+    if not hasattr(embed, filter):
+        raise ValueError('Unknown embedding')
     for subdir in _immediate_subdir('old_logs'):
         df = pd.read_csv(os.path.join('old_logs', subdir, filename))
         df = df.dropna(subset=['info'])
@@ -156,7 +158,7 @@ def load_news(embed=True, filename='data.csv'):
         df['pub_date'] = df['pub_date'].map(lambda x: pd.to_datetime(x).date())
         df = df.set_index('pub_date')
         info_series = df.groupby(df.index)['info'].apply(lambda x: '. '.join(x))
-        if embed:
+        if embed != 'none':
             info_series = info_series.map(filter.preprocess)
             num_column = len(info_series.head(1).values[0])
         else:

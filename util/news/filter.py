@@ -1,8 +1,15 @@
 import spacy
+import sent2vec
 
 # nlp = spacy.load('en_core_web_lg', disable=['ner'])
 nlp = spacy.load('en')
 nlp.vocab.add_flag(lambda s: s in spacy.lang.en.stop_words.STOP_WORDS, spacy.attrs.IS_STOP)
+model.load_model('model.bin')
+model = sent2vec.Sent2vecModel('twitter_bigrams.bin')
+
+
+def fasttext(s):
+    return model.embed_sentence(s) 
 
 
 def filter_tweet(tweets):

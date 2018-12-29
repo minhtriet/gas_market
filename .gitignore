@@ -15,8 +15,9 @@ trained/**
 *.h5
 *.pkl
 *.txt
-*.yaml
 lib/**
 *.xml
 *.owl
 *.swp
+*.pyc
+*.bin

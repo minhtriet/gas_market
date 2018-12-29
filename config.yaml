@@ -1,0 +1,5 @@
+base_path: ./input/
+train_file: train.h5
+default_key: data
+window: 20
+embed: ['none', 'fasttext', 'glove', 'elmo']
