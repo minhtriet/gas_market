@@ -54,7 +54,7 @@ parser = argparse.ArgumentParser(description='data related parameters')
 parser.add_argument('--reset_state_window', help='Reset state after this length stateful lstm', default=30)
 parser.add_argument('--stride', type=int, default=5)
 parser.add_argument('--predict_length', type=int, default=3)
-parser.add_argument('--embed', type=str, required=True, choices=args.embed)
+parser.add_argument('--embed', type=str, required=True, choices=config['embed'])
 args = parser.parse_args()
 
 window = config['window']

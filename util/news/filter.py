@@ -1,11 +1,12 @@
 import spacy
 import sent2vec
-
+from sys import path
+import os
 # nlp = spacy.load('en_core_web_lg', disable=['ner'])
 nlp = spacy.load('en')
 nlp.vocab.add_flag(lambda s: s in spacy.lang.en.stop_words.STOP_WORDS, spacy.attrs.IS_STOP)
-model.load_model('model.bin')
-model = sent2vec.Sent2vecModel('twitter_bigrams.bin')
+model = sent2vec.Sent2vecModel()
+model.load_model(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'twitter_bigrams.bin'))
 
 
 def fasttext(s):
