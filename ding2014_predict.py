@@ -31,11 +31,11 @@ for pred_length in range(1, 7):
     if not args.is_regress:
         unique, counts = np.unique(y_train, return_counts=True)
         print(dict(zip(unique, counts)))
-    print(np.random.choice(y_train[0], 5))
+    print(np.random.choice(y_train.flat, 5))
     if not args.is_regress:
         unique, counts = np.unique(y_test, return_counts=True)
         print(dict(zip(unique, counts)))
-    print(np.random.choice(y_test[0], 5))
+    print(np.random.choice(y_test.flat, 5))
     # End
     shape_2, shape_3 = transformer.transform(x_train[0, :, 1]).toarray().shape
     tf_xtrain = np.empty(shape=(x_train.shape[0], shape_2 * shape_3))

@@ -64,5 +64,6 @@ with open('config.yaml') as stream:
                       epoch=512, predict_length=args.predict_length)
     except yaml.YAMLError as exc:
         print(exc)
-# 24.10 add news
-# 30.10 lemmatize news
+
+
+

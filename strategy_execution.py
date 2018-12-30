@@ -43,14 +43,11 @@ def _feed_past_data(market, d, *arguments):
     :param arguments: number of days to look back
     :return: news and price data
     """
-    # try:
     if not arguments:
         return market['price'].loc[d]
     else:
         loc = market.index.get_loc(d)
         return market.iloc[loc - arguments[0]:loc]
-    # except KeyError:
-    #   return nan
 
 
 def buy(market, day, amount):

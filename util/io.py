@@ -11,7 +11,7 @@ import numpy as np
 import pandas as pd
 import yaml
 
-from util.news import filter
+from util.news import filterer
 
 
 def _reduce_1y(df, market):
@@ -157,7 +157,7 @@ def load_news(embed=True, filename='data.csv'):
         df = df.set_index('pub_date')
         info_series = df.groupby(df.index)['info'].apply(lambda x: '. '.join(x))
         if embed:
-            info_series = info_series.map(filter.preprocess)
+            info_series = info_series.map(filterer.preprocess)
             num_column = len(info_series.head(1).values[0])
         else:
             num_column = 1

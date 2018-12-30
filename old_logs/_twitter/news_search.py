@@ -5,7 +5,7 @@ from datetime import timedelta
 import pandas as pd
 from searchtweets import gen_rule_payload, load_credentials, collect_results
 
-from util.news import filter
+from util.news import filterer
 
 import os
 
@@ -25,6 +25,6 @@ for day in pd.date_range(args.from_day, args.to_day)[::2]:
 
     with open('news_%s.json' % day.date(), 'w') as outfile:
         json.dump(tweets, outfile)
-    tweets = filter.filter_tweet(tweets)
+    tweets = filterer.filter_tweet(tweets)
     with open('processed_%s.json' % day.date(), 'w') as outfile:
         json.dump(tweets, outfile)
