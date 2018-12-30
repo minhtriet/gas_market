@@ -10,12 +10,13 @@ import spacy
 nlp = spacy.load('en')
 nlp.vocab.add_flag(lambda s: s in spacy.lang.en.stop_words.STOP_WORDS, spacy.attrs.IS_STOP)
 # fast text
+print('Load FastText')
 model = sent2vec.Sent2vecModel()
 model.load_model(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'twitter_bigrams.bin'))
+print('FastText completed')
 
-
-def fast_text(s):
-    return model.embed_sentence(s)
+def fasttext(s):
+    return model.embed_sentence(s).flatten()
 
 
 def filter_tweet(tweets):
