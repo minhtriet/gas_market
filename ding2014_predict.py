@@ -51,8 +51,8 @@ for pred_length in range(1, 7):
     # create model
     if args.is_regress:
         model = Sequential()
-        model.add(Dense(1024, input_shape=(shape_2 * shape_3,), activation='relu'))
-        model.add(Dense(256, activation='relu'))
+        model.add(Dense(32, input_shape=(shape_2 * shape_3,), activation='relu'))
+        model.add(Dense(16, activation='relu'))
         model.add(Dense(pred_length))
         model.compile(loss='mse', optimizer='adam', metrics=['mse'])
         model.summary()
