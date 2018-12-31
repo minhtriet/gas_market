@@ -5,11 +5,11 @@ from os import path
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import yaml
 from numpy import linspace
 from sklearn.externals import joblib
 
 from util import io
-import yaml
 
 # scaler for NN methods
 scaler = joblib.load('scaler.pkl')

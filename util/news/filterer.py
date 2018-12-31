@@ -1,19 +1,18 @@
 """
 A zoo of word embedding
 """
-import os
 
-import sent2vec
 import spacy
-
 # nlp = spacy.load('en_core_web_lg', disable=['ner'])
 nlp = spacy.load('en')
-nlp.vocab.add_flag(lambda s: s in spacy.lang.en.stop_words.STOP_WORDS, spacy.attrs.IS_STOP)
-# fast text
+
 print('Load FastText')
-model = sent2vec.Sent2vecModel()
-model.load_model(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'twitter_bigrams.bin'))
+# import sent2vec
+# model = sent2vec.Sent2vecModel()
+# model.load_model(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'twitter_bigrams.bin'))
+model = 0
 print('FastText completed')
+
 
 def fasttext(s):
     return model.embed_sentence(s).flatten()
@@ -33,7 +32,7 @@ def filter_tweet(tweets):
     return filtered_tweet
 
 
-def preprocess(s):
+def spacy(s):
     doc = nlp(s)
     # stopwords, punctuation and number
     necessary_word = []

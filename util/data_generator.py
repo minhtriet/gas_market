@@ -29,7 +29,7 @@ def baseline_crf(train_percentage, sft, future, embed=True):
     return x_train, x_test, y_train, y_test
 
 
-def generate(window, stride, predict_length, future=True, save_scaler=False, train_percentage=0.6, embed=True,
+def generate(window, stride, predict_length, future=True, save_scaler=True, train_percentage=0.6, embed=True,
              is_regress=True):
     """
     :param window: length of the predict data
@@ -76,7 +76,9 @@ def generate(window, stride, predict_length, future=True, save_scaler=False, tra
     x_train, x_test, y_train, y_test = train_test_split(x, y, test_size=1 - train_percentage, shuffle=False)
 
     # how a news has big effect on event long term and short term
+    print("Saving scaler")
     if save_scaler:
         joblib.dump(future_price_scaler, 'scaler.pkl')
 
+    print("Saving scaler done")
     return x_train, x_test, y_train, y_test
