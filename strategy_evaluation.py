@@ -1,15 +1,10 @@
 import argparse
-from datetime import date
-from os import path
 import pickle
-import numpy as np
-import pandas as pd
+from os import path
+
 import tensorflow as tf
 import yaml
-from sklearn.externals import joblib
 from sklearn.metrics import mean_squared_error
-
-from util import io
 
 
 def load_tf_model(tf_version='04_11_23_15'):
@@ -45,9 +40,8 @@ with open('config.yaml') as stream:
 parser = argparse.ArgumentParser(description='buying strategy parsing')
 parser.add_argument('--embed', type=str, required=True, choices=config['embed'])
 args = parser.parse_args()
-embed = args.embed 
-scaler = joblib.load('scaler.pkl')
-graph, sess = load_tf_model('01_01_02_13')
+embed = args.embed
+sess, graph = load_tf_model('01_01_02_13')
 
 print('Loading test set')
 with open(r"x_test_%s.pickle" % embed, "rb") as output_file:
@@ -55,12 +49,9 @@ with open(r"x_test_%s.pickle" % embed, "rb") as output_file:
 with open(r"y_test_%s.pickle" % embed, "rb") as output_file:
     y_test = pickle.load(output_file)
 print('Loading test completed')
-
-for last_n_days in x_test:
-    last_n_days['price'] = scaler.transform(last_n_days['price'].values.reshape(1, -1)).squeeze()
-    # last_n_days = last_n_days.values[np.newaxis, ...]
-    inputs = graph.get_tensor_by_name('input:0')
-    output = graph.get_tensor_by_name('output:0')
-    prediction_result = sess.run(output, feed_dict={inputs: last_n_days})
-    actual_result = _feed_past_data(market, day + predict_length)
-    print(mean_squared_error(prediction_result, actual_result))
+last_n_days = x_test
+actual_result = y_test
+inputs = graph.get_tensor_by_name('input:0')
+output = graph.get_tensor_by_name('output:0')
+prediction_result = sess.run(output, feed_dict={inputs: last_n_days})
+print(mean_squared_error(prediction_result, actual_result))

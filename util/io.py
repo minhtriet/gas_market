@@ -10,7 +10,9 @@ import os
 import numpy as np
 import pandas as pd
 import yaml
+
 from util.news import filterer
+
 
 def _reduce_1y(df, market):
     """
@@ -147,7 +149,7 @@ def load_stock(from_date, to_date):
 
 def load_news(embed, filename='data.csv'):
     big_info_df = pd.DataFrame()
-    if not hasattr(filterer, embed):
+    if embed != 'none' and not hasattr(filterer, embed):
         raise ValueError('Unknown embedding')
     for subdir in _immediate_subdir('old_logs'):
         df = pd.read_csv(os.path.join('old_logs', subdir, filename))

@@ -7,21 +7,8 @@ import pandas as pd
 import tensorflow as tf
 import yaml
 from numpy import linspace
-from sklearn.externals import joblib
 
 from util import io
-
-# scaler for NN methods
-scaler = joblib.load('scaler.pkl')
-
-# global vals
-min_price = 1000
-# buy day is the index at which gas should be bought
-buy_day = -1
-
-# keras variables
-bought = False
-# model_movement = load_model('trained/keras/multistep_std_05_10_09_15.h5')
 
 # tf variable
 tf_version = '04_11_23_15'
@@ -81,7 +68,6 @@ def should_buy(market, method, day):
         if _feed_past_data(market, day) > _feed_past_data(market, day, 1)['price'].values[0]:
             return True
     last_n_days = pd.DataFrame(_feed_past_data(market, day, window), copy=True)
-    last_n_days['price'] = scaler.transform(last_n_days['price'].values.reshape(1, -1)).squeeze()
     last_n_days = last_n_days.values[np.newaxis, ...]
     if method == 'new_tf':
         inputs = graph.get_tensor_by_name('input:0')

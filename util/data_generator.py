@@ -6,7 +6,7 @@ from sklearn.preprocessing import StandardScaler
 from util import io
 
 
-def baseline_crf(train_percentage, sft, future, embed=True):
+def baseline_crf(train_percentage, sft, future, embed='none'):
     """
     news day n results in day n+1 price, shift index by 1 position
     :param train_percentage: train test split

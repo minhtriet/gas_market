@@ -1,11 +1,12 @@
 import argparse
 import os
+import pickle
+
 import yaml
 from keras.callbacks import TensorBoard
 
 from models import tcn, lstm, lstm_tf
 from util import data_generator
-import pickle
 
 
 def run_tcn(d, x_train, x_test, y_train, y_test):
@@ -70,13 +71,13 @@ if not os.path.isfile('x_train_%s.pkl' % embed):
         pickle.dump(y_test, output_file)
 else:
     with open(r"x_train_%s.pickle" % embed, "rb") as output_file:
-        pickle.load(x_train, output_file)
+        x_train = pickle.load(output_file)
     with open(r"y_train_%s.pickle" % embed, "rb") as output_file:
-        pickle.load(y_train, output_file)
+        y_train = pickle.load(output_file)
     with open(r"x_test_%s.pickle" % embed, "rb") as output_file:
-        pickle.load(x_test, output_file)
+        x_test = pickle.load(output_file)
     with open(r"y_test_%s.pickle" % embed, "rb") as output_file:
-        pickle.load(y_test, output_file)
+        y_test = pickle.load(output_file)
 
 # spacy
 lstm_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.005, epoch=512, predict_length=args.predict_length)
