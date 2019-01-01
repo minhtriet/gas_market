@@ -1,7 +1,7 @@
 import argparse
 from datetime import date
 from os import path
-
+import pickle
 import numpy as np
 import pandas as pd
 import tensorflow as tf
@@ -39,33 +39,28 @@ def _feed_past_data(market, d, *arguments):
 with open('config.yaml') as stream:
     try:
         config = yaml.load(stream)
-
     except yaml.YAMLError as exc:
         print(exc)
 
-window = config['window']
-predict_length = config['predict_length']
 parser = argparse.ArgumentParser(description='buying strategy parsing')
-parser.add_argument('--from_day', type=str, help='start buying date', required=True)
-parser.add_argument('--to_day', type=str, help='to buying date', required=True)
+parser.add_argument('--embed', type=str, required=True, choices=config['embed'])
 args = parser.parse_args()
-
+embed = args.embed 
 scaler = joblib.load('scaler.pkl')
-market = io.read_future_market_v2('gpl')
-news = io.load_news('spacy')
-market = market.join(news, how='left')
-market.fillna(0, inplace=True)
+graph, sess = load_tf_model('01_01_02_13')
 
-sess, graph = load_tf_model()
-# run through days and
-args.to_day = date(int(args.to_day.split('-')[0]), int(args.to_day.split('-')[1]), int(args.to_day.split('-')[2]))
-date_range = pd.date_range(args.from_day, args.to_day)
-for day in date_range:
-    last_n_days = pd.DataFrame(_feed_past_data(market, day, window), copy=True)
+print('Loading test set')
+with open(r"x_test_%s.pickle" % embed, "rb") as output_file:
+    x_test = pickle.load(output_file)
+with open(r"y_test_%s.pickle" % embed, "rb") as output_file:
+    y_test = pickle.load(output_file)
+print('Loading test completed')
+
+for last_n_days in x_test:
     last_n_days['price'] = scaler.transform(last_n_days['price'].values.reshape(1, -1)).squeeze()
-    last_n_days = last_n_days.values[np.newaxis, ...]
+    # last_n_days = last_n_days.values[np.newaxis, ...]
     inputs = graph.get_tensor_by_name('input:0')
     output = graph.get_tensor_by_name('output:0')
     prediction_result = sess.run(output, feed_dict={inputs: last_n_days})
     actual_result = _feed_past_data(market, day + predict_length)
-    mean_squared_error(prediction_result, actual_result)
+    print(mean_squared_error(prediction_result, actual_result))

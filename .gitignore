@@ -21,3 +21,4 @@ lib/**
 *.swp
 *.pyc
 *.bin
+*.pickle
