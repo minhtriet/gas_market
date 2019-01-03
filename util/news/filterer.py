@@ -1,16 +1,19 @@
 """
 A zoo of word embedding
 """
-
+import os
 import spacy
 # nlp = spacy.load('en_core_web_lg', disable=['ner'])
-nlp = spacy.load('en')
-
+nlp = spacy.load('en_core_web_lg')
+for word in nlp.Defaults.stop_words:
+    for w in (word, word[0].upper() + word[1:], word.upper()):
+        lex = nlp.vocab[w]
+        lex.is_stop = True
 print('Load FastText')
-# import sent2vec
-# model = sent2vec.Sent2vecModel()
-# model.load_model(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'twitter_bigrams.bin'))
-model = 0
+import sent2vec
+model = sent2vec.Sent2vecModel()
+model.load_model(os.path.join(os.path.dirname(os.path.realpath(__file__)), 'twitter_bigrams.bin'))
+# model = 0
 print('FastText completed')
 
 
