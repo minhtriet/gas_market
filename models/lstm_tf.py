@@ -1,10 +1,7 @@
+import os.path
 from datetime import datetime
 
 import tensorflow as tf
-
-runtime = datetime.now().strftime('%d_%m_%H_%M')
-summaries_dir = 'logs/tf_lstm_%s/' % runtime
-weight_path = 'logs/tf_lstm_%s/model' % runtime
 
 
 def _lstm_cell(layer_shape):
@@ -14,6 +11,9 @@ def _lstm_cell(layer_shape):
 
 def train(x_train, y_train, x_test, y_test, layer_shape, time_steps, epoch, learning_rate, predict_length):
     num_feature = x_train[0].shape[-1]
+    runtime = datetime.now().strftime('%d_%m_%H_%M')
+    summaries_dir = os.path.join('logs', 'tf_lstm_%s_%s_%s' % (runtime, layer_shape, learning_rate))
+    weight_path = os.path.join(summaries_dir, 'model')
     print(num_feature)
     tf.reset_default_graph()
     tf.set_random_seed(1)

@@ -59,7 +59,7 @@ parser.add_argument('--embed', type=str, required=True, choices=config['embed'])
 args = parser.parse_args()
 embed = args.embed
 window = config['window']
-if not os.path.isfile('x_train_%s.pkl' % embed):
+if not os.path.isfile('x_train_%s.pickle' % embed):
     x_train, x_test, y_train, y_test = data_generator.generate(window, future=True, train_percentage=0.6, stride=args.stride, embed=args.embed, predict_length=args.predict_length)
     with open(r"x_train_%s.pickle" % embed, "wb") as output_file:
         pickle.dump(x_train, output_file)
