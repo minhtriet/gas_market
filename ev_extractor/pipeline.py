@@ -64,7 +64,7 @@ def pipeline(sent):
 
 
 def _disambiguation():
-    ev = ['noun.phenomenon', 'noun.act', 'noun.event', 'adj.all', 'adv.all']
+    ev = ['noun.phenomenon', 'noun.act', 'noun.event', 'noun.attribute', 'adj.all', 'adv.all']
     true_splits = []
     with cd(path.join('lib', 'ims_0.9.2.1')):
         pattern = '<x(.+?)</x>'
