@@ -5,7 +5,7 @@ import pickle
 import yaml
 from keras.callbacks import TensorBoard
 
-from models import tcn, lstm, lstm_tf
+from models import tcn, lstm, lstm_tf, lstm_regularize_tf
 from util import data_generator
 
 
@@ -80,6 +80,6 @@ else:
         y_test = pickle.load(output_file)
 
 # spacy
-lstm_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.005, epoch=512, predict_length=args.predict_length)
+lstm_regularize_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.001, epoch=4096, predict_length=args.predict_length)
 # fasttext
 #lstm_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.005, epoch=512, predict_length=args.predict_length)
