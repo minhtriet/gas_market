@@ -23,22 +23,26 @@ def cd(newdir):
 
 def _extract(sent):
     doc = nlp(sent)
+    print('Extracting clauses and phrases')
     # subordinate phrases
     splits = [sent]
     clauses = []
     for stn in doc.sents:
         for word in stn:
             if word.dep_ in ('xcomp', 'ccomp', 'rcmod', 'advcl') or word.pos_ in ('ADP'):  # phrase
+                print('Phrase: ', word, list(word.subtree))
                 phrase = ' '.join(w.text_with_ws.strip() for w in word.subtree)
-                phrase = re.sub('\s(?=[,:])', phrase, '')
+                phrase = re.sub('\s(?=[,:])', '', phrase)
                 splits.append(phrase)
             if word.pos_ in ('VERB'):  # clause VERB
+                print('Clause: ', word, list(word.subtree))
                 clause = ' '.join(w.text_with_ws.strip() for w in word.subtree)
-                clause = re.sub('\s(?=[,:])', clause, '')
+                clause = re.sub('\s(?=[,:])', '', clause)
                 clauses.append(clause)
     splits.sort(key=len)
     print('Clauses: ', clauses)
     print('Phrases: ', splits)
+    print('Extraction done')
     return clauses, splits
 
 
