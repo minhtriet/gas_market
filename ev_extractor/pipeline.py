@@ -26,7 +26,6 @@ def _extract(sent):
     # subordinate phrases
     splits = [sent]
     clauses = []
-    print(sent)
     for stn in doc.sents:
         for word in stn:
             if word.dep_ in ('xcomp', 'ccomp', 'rcmod', 'advcl') or word.pos_ in ('ADP'):  # phrase
@@ -38,6 +37,8 @@ def _extract(sent):
                 clause = re.sub('\s(?=[,:])', clause, '')
                 clauses.append(clause)
     splits.sort(key=len)
+    print('Clauses: ', clauses)
+    print('Phrases: ', splits)
     return clauses, splits
 
 
@@ -45,19 +46,21 @@ def _consolidate(splits):
     for i in range(len(splits) - 1):
         for j in range(i + 1, len(splits)):
             splits[j] = splits[j].replace(splits[i], '').strip()
-    print('Splits: ', splits)
+    print('Consolidate splits: ', splits)
     return splits
 
 
 def pipeline(sent):
     print(sent)
     clauses, phrases = _extract(sent)
-    with cd(path.join('lib', 'ims_0.9.2.1')):
-        with open('test_.txt', 'w', encoding='utf-8') as f:
-            for split in phrases:
-                f.write('%s\n' % split)
-        call(['bash', 'testPlain.bash', 'models-MUN-SC-wn30', 'test_.txt', 'out_.txt',
-              path.join('lib', 'dict', 'index.sense')])
+    if len(phrases) > 0:
+        with cd(path.join('lib', 'ims_0.9.2.1')):
+            with open('test_.txt', 'w', encoding='utf-8') as f:
+                # if clauses, ie has verb, no need to go through pipeline
+                for split in phrases:
+                    f.write('%s\n' % split)
+            call(['bash', 'testPlain.bash', 'models-MUN-SC-wn30', 'test_.txt', 'out_.txt',
+                  path.join('lib', 'dict', 'index.sense')])
     phrases = _disambiguation()
     clauses.extend(phrases)
     return _consolidate(clauses)
@@ -79,6 +82,8 @@ def _disambiguation():
                         lexnames.append(lexname)
                     except WordNetError:
                         print(key)
+                print(lexnames)
                 if set(lexnames).intersection(set(ev)):
                     true_splits.append(line1)
+    print('Disambiguation: ', true_splits)
     return true_splits
