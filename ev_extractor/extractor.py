@@ -1,19 +1,19 @@
-import numpy as np
+import sys
+sys.path.insert(0, '.')
 
+import numpy as np
 from ev_extractor import pipeline
 from util import io
 
 news = io.load_news(embed='none')
-for i, _ in news.iterrows():
+news = news.groupby(news.index)[0].apply(lambda x: [x])
+for i, _ in news.iteritems():
     splits = []
-    print(news.loc[i].values)
-    for article in news.loc[i].values:
+    print(news.loc[i])
+    for article in news.loc[i]:
         splits.append(pipeline.pipeline(article[0]))
     try:
-        l = len(splits)
-        news.loc[i] = np.array(splits).reshape(l, 1)
+        l = np.array(splits).size 
+        news.loc[i] = splits
     except:
-        import pdb
-
-        pdb.set_trace()
 news.to_csv('event.csv')
