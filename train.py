@@ -5,7 +5,7 @@ import pickle
 import yaml
 from keras.callbacks import TensorBoard
 
-from models import tcn, lstm, lstm_tf, lstm_regularize_tf
+from models import tcn, lstm, lstm_tf, lstm_regularize_tf, lstm_regularize_bn_tf
 from util import data_generator
 
 
@@ -53,8 +53,8 @@ with open('config.yaml') as stream:
         print(exc)
 parser = argparse.ArgumentParser(description='data related parameters')
 parser.add_argument('--reset_state_window', help='Reset state after this length stateful lstm', default=30)
-parser.add_argument('--stride', type=int, default=5)
-parser.add_argument('--predict_length', type=int, default=5)
+parser.add_argument('--stride', type=int, default=3)
+parser.add_argument('--predict_length', type=int, default=3)
 parser.add_argument('--embed', type=str, required=True, choices=config['embed'])
 args = parser.parse_args()
 embed = args.embed
@@ -80,6 +80,7 @@ else:
         y_test = pickle.load(output_file)
 
 # spacy
-lstm_regularize_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.001, epoch=4096, predict_length=args.predict_length)
+#lstm_regularize_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.001, epoch=4096, predict_length=args.predict_length)
+lstm_regularize_bn_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.0000001, epoch=5000, predict_length=args.predict_length)
 # fasttext
 #lstm_tf.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32], learning_rate=0.005, epoch=512, predict_length=args.predict_length)
