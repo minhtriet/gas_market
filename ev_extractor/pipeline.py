@@ -39,7 +39,6 @@ def _extract(sent):
                 clause = ' '.join(w.text_with_ws.strip() for w in word.subtree)
                 clause = re.sub('\s(?=[,:])', '', clause)
                 clauses.append(clause)
-    splits.sort(key=len)
     print('Clauses: ', clauses)
     print('Phrases: ', splits)
     print('Extraction done')
@@ -47,11 +46,30 @@ def _extract(sent):
 
 
 def _consolidate(splits):
+    print(splits)
+    splits.sort(key=len)
     for i in range(len(splits) - 1):
         for j in range(i + 1, len(splits)):
             splits[j] = splits[j].replace(splits[i], '').strip()
     print('Consolidate splits: ', splits)
     return splits
+
+
+def _informative_filter(split):
+    """
+    delete clauses, delete the word natural before the word gas, count
+    adj and noun
+    :param splits:
+    :return:
+    """
+    if len(split) > 0:
+        temp_split = split
+        temp_split = temp_split.replace('natural gas', 'gas')
+        doc = nlp(temp_split)
+        for token in doc:
+            if token.pos_ == 'ADJ':
+                return True
+    return False
 
 
 def pipeline(sent):
@@ -67,7 +85,9 @@ def pipeline(sent):
                   path.join('lib', 'dict', 'index.sense')])
     phrases = _disambiguation()
     clauses.extend(phrases)
-    return _consolidate(clauses)
+    clauses = _consolidate(clauses)
+    clauses[:] = [tup for tup in clauses if _informative_filter(tup)]
+    return clauses
 
 
 def _disambiguation():
@@ -87,6 +107,7 @@ def _disambiguation():
                     except WordNetError:
                         print(key)
                 print(lexnames)
+                print(line1)
                 if set(lexnames).intersection(set(ev)):
                     true_splits.append(line1)
     print('Disambiguation: ', true_splits)
