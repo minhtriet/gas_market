@@ -1,6 +1,7 @@
 import os
 import re
 from contextlib import contextmanager
+from copy import deepcopy
 from os import path
 from subprocess import call
 
@@ -25,20 +26,21 @@ def _extract(sent):
     doc = nlp(sent)
     print('Extracting clauses and phrases')
     # subordinate phrases
-    splits = [sent]
+    splits = []
     clauses = []
     for stn in doc.sents:
         for word in stn:
-            if word.dep_ in ('xcomp', 'ccomp', 'rcmod', 'advcl') or word.pos_ in ('ADP'):  # phrase
-                print('Phrase: ', word, list(word.subtree))
-                phrase = ' '.join(w.text_with_ws.strip() for w in word.subtree)
-                phrase = re.sub('\s(?=[,:])', '', phrase)
-                splits.append(phrase)
-            if word.pos_ in ('VERB'):  # clause VERB
-                print('Clause: ', word, list(word.subtree))
-                clause = ' '.join(w.text_with_ws.strip() for w in word.subtree)
-                clause = re.sub('\s(?=[,:])', '', clause)
-                clauses.append(clause)
+            if len(list(word.subtree)) > 1:  # Cuadrilla pauses fracking operations after tremor in Lancashire site
+                if word.dep_ in ('xcomp', 'ccomp', 'rcmod', 'advcl') or word.pos_ in ('ADP'):  # phrase
+                    print('Phrase: ', word, list(word.subtree))
+                    phrase = ' '.join(w.text_with_ws.strip() for w in word.subtree)
+                    phrase = re.sub('\s(?=[,:])', '', phrase)
+                    splits.append(phrase)
+                if word.pos_ in ('VERB'):  # clause VERB
+                    print('Clause: ', word, list(word.subtree))
+                    clause = ' '.join(w.text_with_ws.strip() for w in word.subtree)
+                    clause = re.sub('\s(?=[,:])', '', clause)
+                    clauses.append(clause)
     print('Clauses: ', clauses)
     print('Phrases: ', splits)
     print('Extraction done')
@@ -46,13 +48,17 @@ def _extract(sent):
 
 
 def _consolidate(splits):
-    print(splits)
-    splits.sort(key=len)
-    for i in range(len(splits) - 1):
-        for j in range(i + 1, len(splits)):
-            splits[j] = splits[j].replace(splits[i], '').strip()
-    print('Consolidate splits: ', splits)
-    return splits
+    new_split = deepcopy(splits)
+    for i in range(len(splits)):
+        for j in range(len(splits)):
+            if i != j:
+                new_split[i] = new_split[i].replace(splits[j], '').strip()
+    print('Consolidate splits: ', new_split)
+    return new_split
+
+
+def _lemmatize(doc):
+    return [token.lemma_ for token in doc if not token.is_stop]
 
 
 def _informative_filter(split):
@@ -62,13 +68,20 @@ def _informative_filter(split):
     :param splits:
     :return:
     """
+    print(split)
     if len(split) > 0:
         temp_split = split
         temp_split = temp_split.replace('natural gas', 'gas')
         doc = nlp(temp_split)
+        for ent in doc.ents:
+            if ent.label_ == 'GPE':
+                print(True)
+                return True
         for token in doc:
             if token.pos_ == 'ADJ':
+                print(True)
                 return True
+    print(False)
     return False
 
 
@@ -84,9 +97,18 @@ def pipeline(sent):
             call(['bash', 'testPlain.bash', 'models-MUN-SC-wn30', 'test_.txt', 'out_.txt',
                   path.join('lib', 'dict', 'index.sense')])
     phrases = _disambiguation()
+    print('Check informative')
+    phrases[:] = [tup for tup in phrases if _informative_filter(tup)]
+    print('Checked informative')
+    print(phrases)
+    print('-----')
+    print([clauses], [phrases])
     clauses.extend(phrases)
+    print(clauses)
+    print('Consolidate')
     clauses = _consolidate(clauses)
-    clauses[:] = [tup for tup in clauses if _informative_filter(tup)]
+    print(clauses)
+    print('Final ', clauses)
     return clauses
 
 
@@ -109,6 +131,6 @@ def _disambiguation():
                 print(lexnames)
                 print(line1)
                 if set(lexnames).intersection(set(ev)):
-                    true_splits.append(line1)
+                    true_splits.append(line1.strip())
     print('Disambiguation: ', true_splits)
     return true_splits
