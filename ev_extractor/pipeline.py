@@ -58,6 +58,7 @@ def _consolidate(splits):
 
 
 def _lemmatize(doc):
+    doc = nlp(doc)
     return [token.lemma_ for token in doc if not token.is_stop]
 
 
@@ -109,6 +110,8 @@ def pipeline(sent):
     clauses = _consolidate(clauses)
     print(clauses)
     print('Final ', clauses)
+    for i in range(len(clauses)):
+        clauses[i] = _lemmatize(clauses[i])
     return clauses
 
 
