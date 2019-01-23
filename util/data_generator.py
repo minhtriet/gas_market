@@ -29,8 +29,7 @@ def baseline_crf(train_percentage, sft, future, embed='none'):
     return x_train, x_test, y_train, y_test
 
 
-def generate(window, stride, predict_length, future=True, save_scaler=True, train_percentage=0.6, embed=True,
-             is_regress=True, news=True):
+def generate(window, stride, predict_length, future=True, save_scaler=True, train_percentage=0.6, embed=True, is_regress=True, news=True):
     """
     :param window: length of the predict data
     :param stride: stride
