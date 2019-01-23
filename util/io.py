@@ -147,6 +147,12 @@ def load_stock(from_date, to_date):
     return df
 
 
+def load_events():
+    if os.path.isfile('event.csv'):
+        return pd.read_csv('event.csv')
+    raise FileNotFoundError
+
+
 def load_news(embed, filename='data.csv'):
     big_info_df = pd.DataFrame()
     if embed != 'none' and not hasattr(filterer, embed):
