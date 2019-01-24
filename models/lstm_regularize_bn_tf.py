@@ -11,6 +11,7 @@ def _lstm_cell(layer_shape, prob):
     drop_out = [tf.nn.rnn_cell.DropoutWrapper(tf.nn.rnn_cell.LSTMCell(num_unit), output_keep_prob=prob) for num_unit in layer_shape]
     return drop_out
 
+
 def train(x_train, y_train, x_test, y_test, layer_shape, time_steps, epoch, learning_rate, predict_length):
     num_feature = x_train[0].shape[-1]
     print(num_feature)

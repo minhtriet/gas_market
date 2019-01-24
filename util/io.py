@@ -149,7 +149,8 @@ def load_stock(from_date, to_date):
 
 def load_events():
     if os.path.isfile('event.csv'):
-        return pd.read_csv('event.csv')
+        df = pd.read_csv('event.csv', index_col=0, header=None)
+        return df
     raise FileNotFoundError
 
 
