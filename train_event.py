@@ -32,11 +32,8 @@ x_train_onehot = vectorizer.fit_transform(corpus)
 word2idx = {word: idx for idx, word in enumerate(vectorizer.get_feature_names())}
 embeddings_index = np.zeros((len(vectorizer.get_feature_names()) + 1, 300))
 for word, idx in word2idx.items():
-    try:
-        embedding = nlp.vocab[word].vector
-        embeddings_index[idx] = embedding
-    except:
-        pass
+    embedding = nlp.vocab[word].vector
+    embeddings_index[idx] = embedding
 word2idx = {word: idx for idx, word in enumerate(vectorizer.get_feature_names())}
 
 x_train, x_test, y_train, y_test = data_generator.generate(window, future=True, news=False, train_percentage=0.6,

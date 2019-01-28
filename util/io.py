@@ -5,6 +5,7 @@ Created on Tue Jun  5 18:05:28 2018
 @author: GIQNO
 """
 
+import ast
 import os
 
 import numpy as np
@@ -150,6 +151,7 @@ def load_stock(from_date, to_date):
 def load_events():
     if os.path.isfile('event.csv'):
         df = pd.read_csv('event.csv', index_col=0, header=None, encoding='utf-8')
+        df[1] = df[1].apply(ast.literal_eval)
         return df
     raise FileNotFoundError
 
