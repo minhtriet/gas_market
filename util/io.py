@@ -152,6 +152,7 @@ def load_events():
     if os.path.isfile('event.csv'):
         df = pd.read_csv('event.csv', index_col=0, header=None, encoding='utf-8')
         df[1] = df[1].apply(ast.literal_eval)
+        df[1] = df[1].apply(lambda x: np.array(x).flatten())
         return df
     raise FileNotFoundError
 
