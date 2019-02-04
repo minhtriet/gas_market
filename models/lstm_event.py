@@ -22,18 +22,26 @@ def _padding(event_array, ):
 
     for batch in range(event_array.shape[0]):
         # find number of biggest and longest events in this batch
-        eventful_number = max(event_array[batch, day], key=len)
+        import pdb;
+
+        # UnicodeEncodeError
+        for event in event_array[batch]:
+
+        try:
+            eventful_day_events = len(max(event_array[batch, :], key=len))
+        except:
+            pdb.set_trace()
         temp = [y for x in event_array[batch, day] for y in x if len(y) > 1]
-        max_len = len(max(temp, key=len))
+        longest_event = len(max(temp, key=len))
         for day in range(event_array.shape[1]):
             if type(event_array[batch, day]) == int:
                 continue
             event_array[batch, day] = np.array([np.array(x).flatten() for x in event_array[batch, day]])
-            news_output[batch][day].append(pad_sequences(temp, maxlen=max_len, dtype=object))
+            news_output[batch][day].append(pad_sequences(temp, maxlen=longest_event, dtype=object))
             for news in range(len(event_array[batch, day])):
                 event_array[batch, day] = np.array([np.array(x).flatten() for x in event_array[batch, day]])
                 try:
-                    event_array[batch, day] = pad_sequences(event_array[batch, day], maxlen=max_len, dtype=object)
+                    event_array[batch, day] = pad_sequences(event_array[batch, day], maxlen=longest_event, dtype=object)
                 except:
                     pass
             event_array[batch, day] = np.array(event_array[batch, day], dtype=object)
@@ -66,7 +74,7 @@ def train(x_train, y_train, x_test, y_test, layer_shape, time_steps, epoch, lear
     x_train_price = _process_price(x_train, event_per_days, words_per_news)
     x_test_price = _process_price(x_test, event_per_days, words_per_news)
 
-    x_train_events = x_train[:, :, 1]
+    x_train_events = np.array(x_train[:, :, 1], dtype=object)
     x_train_events = _padding(x_train_events)
 
     x_test_events = x_test[:, :, 1]
