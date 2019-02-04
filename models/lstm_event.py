@@ -5,20 +5,31 @@ from keras.layers import Embedding, Input, concatenate, Conv3D
 from keras.preprocessing.sequence import pad_sequences
 
 
-def _padding(event_array, max_len, events_per_day, word_per_news):
+# def _padding(event_array, max_len, events_per_day, word_per_news):
+def _padding(event_array, ):
+    '''
+    5d array from 2d array
+    :param event_array:
+    :param max_len:
+    :param events_per_day:
+    :param word_per_news:
+    :return:
+    '''
     useless_news = 0
-    news_output = np.zeros(shape=(event_array.shape[0], event_array.shape[1], events_per_day, word_per_news))
+    # news_output = np.zeros(shape=(event_array.shape[0], event_array.shape[1], ))
+    news_output = [[[] * event_array.shape[1]] * event_array.shape[0]]
     # pad events
 
     for batch in range(event_array.shape[0]):
+        # find number of biggest and longest events in this batch
+        eventful_number = max(event_array[batch, day], key=len)
+        temp = [y for x in event_array[batch, day] for y in x if len(y) > 1]
+        max_len = len(max(temp, key=len))
         for day in range(event_array.shape[1]):
             if type(event_array[batch, day]) == int:
-                useless_news += 1
                 continue
-            # for id, news in enumerate(event_array[batch, day][:]):
-            #     if len(news) == 0:
-            #         useless_news += 1
-            #         event_array[batch, day] = np.delete(event_array[batch, day], id)
+            event_array[batch, day] = np.array([np.array(x).flatten() for x in event_array[batch, day]])
+            news_output[batch][day].append(pad_sequences(temp, maxlen=max_len, dtype=object))
             for news in range(len(event_array[batch, day])):
                 event_array[batch, day] = np.array([np.array(x).flatten() for x in event_array[batch, day]])
                 try:
@@ -56,7 +67,7 @@ def train(x_train, y_train, x_test, y_test, layer_shape, time_steps, epoch, lear
     x_test_price = _process_price(x_test, event_per_days, words_per_news)
 
     x_train_events = x_train[:, :, 1]
-    # x_train_events = _padding(x_train_events, words_per_news)
+    x_train_events = _padding(x_train_events)
 
     x_test_events = x_test[:, :, 1]
     # x_test_events = _padding(x_test_events, words_per_news)
@@ -66,9 +77,10 @@ def train(x_train, y_train, x_test, y_test, layer_shape, time_steps, epoch, lear
     # price_input = Input(batch_shape=(None, seq_length, event_per_days, words_per_news, 1), name='price_input', dtype="float32")
     # event_input = Input(batch_shape=(None, seq_length, event_per_days, words_per_news), name='event_input')
     price_input = Input(name='price_input', dtype="float32", shape=(10, None, None, 1))
-    event_input = Input(name='event_input', shape=(10, None, None))
+    event_input = Input(name='event_input', shape=(10, None))
     emb = Embedding(input_dim=num_words, output_dim=300, embeddings_initializer=Constant(embed),
                     mask_zero=False, trainable=False)(event_input)
+    print(emb._keras_shape)
     total_input = concatenate([emb, price_input], axis=4)
     print(total_input._keras_shape)
     conv1 = Conv3D(layer_shape[0], kernel_size=(3, event_per_days, 3), activation='relu')(total_input)
@@ -82,4 +94,5 @@ def train(x_train, y_train, x_test, y_test, layer_shape, time_steps, epoch, lear
     # assert x_test_events.shape == (339, 10, 5, 7)
     # x_train_events = np.zeros(shape=)
     #`x_test_events = np.zeros(shape=(227, 10, 5, 7))
+    price = [[]]
     model.fit([x_train_price, x_train_events], [y_train], validation_data=([x_test_price, x_test_events], [y_test]))
