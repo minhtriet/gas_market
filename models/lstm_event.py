@@ -1,7 +1,7 @@
 import numpy as np
 from keras import Model
 from keras.initializers import Constant
-from keras.layers import Embedding, Input, concatenate, Conv3D
+from keras.layers import Embedding, Input, concatenate, Conv3D, Conv2D
 from keras.preprocessing.sequence import pad_sequences
 
 
@@ -31,21 +31,13 @@ def _padding(event_array, ):
         for day in range(event_array.shape[1]):
             temp = [y for x in event_array[batch, day] for y in x]
             if len(temp) == 0:
-                len = event_array[batch, day]
+                temp = event_array[batch, day]
             else:
                 longest_event = len(max(temp, key=len))  # only update longest event when not null
-            # event_array[batch, day] = np.array([np.array(x).flatten() for x in event_array[batch, day]])
             try:
                 news_output[batch][day].append(pad_sequences(temp, maxlen=longest_event, dtype=object))
             except:
                 pass
-            # for news in range(len(event_array[batch, day])):
-            #     event_array[batch, day] = np.array([np.array(x).flatten() for x in event_array[batch, day]])
-            #     try:
-            #         event_array[batch, day] = pad_sequences(event_array[batch, day], maxlen=longest_event, dtype=object)
-            #     except:
-            #         pass
-            # event_array[batch, day] = np.array(event_array[batch, day], dtype=object)
     print('useless news', useless_news)
     return news_output
 
@@ -63,7 +55,7 @@ def _process_price(price, event_per_days, words_per_news):
     # x_train_price = np.expand_dims(x_train_price, axis=2)
     x_extend_price = np.array([_price_transform(event_per_days, words_per_news, x_train_price[chuck_index])
                                for chuck_index in range(len(x_train_price))])
-    x_extend_price = np.expand_dims(x_extend_price, 4)
+    # x_extend_price = np.expand_dims(x_extend_price, 4)
     return x_extend_price
 
 
@@ -85,15 +77,15 @@ def train(x_train, y_train, x_test, y_test, layer_shape, time_steps, epoch, lear
     num_words = len(embed) + 1
     # price_input = Input(batch_shape=(None, seq_length, event_per_days, words_per_news, 1), name='price_input', dtype="float32")
     # event_input = Input(batch_shape=(None, seq_length, event_per_days, words_per_news), name='event_input')
-    price_input = Input(name='price_input', dtype="float32", shape=(10, None, None, 1))
+    price_input = Input(name='price_input', dtype="float32", shape=(10, None, 1))
     event_input = Input(name='event_input', shape=(10, None))
     emb = Embedding(input_dim=num_words, output_dim=300, embeddings_initializer=Constant(embed),
                     mask_zero=False, trainable=False)(event_input)
     print(emb._keras_shape)
-    total_input = concatenate([emb, price_input], axis=4)
+    total_input = concatenate([emb, price_input], axis=3)
     print(total_input._keras_shape)
-    conv1 = Conv3D(layer_shape[0], kernel_size=(3, event_per_days, 3), activation='relu')(total_input)
-    out = Conv3D(3, kernel_size=(1, 1, 1), activation='linear')(conv1)
+    conv1 = Conv2D(layer_shape[0], kernel_size=(event_per_days, 3), activation='relu')(total_input)
+    out = Conv2D(3, kernel_size=(1, 1), activation='linear')(conv1)
     # flat = Flatten()(conv1)
     # out = Dense(3)(flat)
     print(out._keras_shape)
