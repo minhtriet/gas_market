@@ -11,6 +11,7 @@ from util import data_generator, io
 
 nlp = spacy.load('en_core_web_lg')
 
+
 with open('config.yaml') as stream:
     try:
         config = yaml.load(stream)
@@ -28,7 +29,7 @@ corpus = news.loc[:'2013-04-11', 0].values  # 60%
 vectorizer = CountVectorizer(binary=True, stop_words=stopwords.words('english'),
                              lowercase=True, min_df=3, max_df=0.9, max_features=128000)
 x_train_onehot = vectorizer.fit_transform(corpus)
-word2idx = {word: idx for idx, word in enumerate(vectorizer.get_feature_names())}
+word2idx = {nlp(word)[0].lemma_: idx for idx, word in enumerate(vectorizer.get_feature_names())}
 embeddings_index = np.zeros((len(vectorizer.get_feature_names()) + 1, 300))
 for word, idx in word2idx.items():
     embedding = nlp.vocab[word].vector
@@ -41,7 +42,7 @@ x_train, x_test, y_train, y_test = data_generator.generate(window, future=True, 
                                                            )
 lstm_event.train(x_train, y_train, x_test, y_test, time_steps=window, layer_shape=[128, 32],
                  learning_rate=0.0000001, epoch=5000, predict_length=args.predict_length,
-                 embed=embeddings_index, words_per_news=300)
+                 embed=embeddings_index, words_per_news=15, wordindex=word2idx)
 # >>> np.percentile(news[0].str.len(), 10)
 # 38.0
 # >>> np.percentile(news[0].str.len(), 20)
