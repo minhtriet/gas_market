@@ -65,7 +65,7 @@ def _process_price(price, event_per_days, words_per_news):
         return np.array(temp).flatten().reshape(-1, ev_per_day, word_per_news)
 
     x_train_price = price[:, :, 0]
-    # x_train_price = np.expand_dims(x_train_price, axis=2)
+
     x_extend_price = np.array([_price_transform(event_per_days, words_per_news, x_train_price[chuck_index])
                                for chuck_index in range(len(x_train_price))])
     x_extend_price = np.expand_dims(x_extend_price, 4)

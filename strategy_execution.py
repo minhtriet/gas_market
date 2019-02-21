@@ -20,7 +20,7 @@ graph = tf.get_default_graph()
 saver.restore(sess, tf.train.latest_checkpoint(tf_weight_path))
 
 # news
-news = io.load_news()
+news = io.load_news('spacy')
 
 
 def _feed_past_data(market, d, *arguments):
@@ -34,8 +34,10 @@ def _feed_past_data(market, d, *arguments):
         return market['price'].loc[d]
     else:
         loc = market.index.get_loc(d)
-        return market.iloc[loc - arguments[0]:loc]
-
+        try:
+            return market.iloc[loc - arguments[0]:loc]
+        except:
+            pass
 
 def buy(market, day, amount):
     assert amount >= 0
@@ -59,7 +61,6 @@ def _update_buy_day(prediction):
 
 def should_buy(market, method, day):
     global min_price, buy_day
-    print(day)
     if log['goal'].loc[day] < log['reservoir'].loc[day]:
         return False
     if method == 'baseline':
@@ -89,7 +90,7 @@ def _evaluate(market, on_day, for_day, movement):
 def strategy(market, rank_function_name):
     reservoir_index = list(log.columns).index('reservoir')
     goal_index = list(log.columns).index('goal')
-
+    print(rank_function_name, "=======")
     # loop by position instead of date to prevent date without data
     for i in range(len(log)):
         log.iloc[i, reservoir_index] = log.iloc[i - 1, reservoir_index]
@@ -115,22 +116,26 @@ parser.add_argument('--from_day', type=str, help='start buying date', required=T
 parser.add_argument('--to_day', type=str, help='to buying date', required=True)
 args = parser.parse_args()
 
-market = io.read_future_market_v2('gpl')
-spot = io.read_spot_market()
-news = io.load_news()
+# market = io.read_future_market_v2('gpl')
+market = io.read_spot_market_v2('gpl')
 market = market.join(news, how='left')
 market.fillna(0, inplace=True)
+market = market[~market.index.duplicated(keep='first')].sort_index()
+
 # choose only between start_day - window and end_day
 end_goal = 1200
+min_price = 9999
+strategy_name = ['new_tf', 'baseline']
+look_back = [window, 1]
+# strategy_name = ['new_tf', 'old', 'baseline']
+#look_back = [window, 1, 1]
 
-strategy_name = ['new_tf', 'old', 'baseline']
-look_back = [window, 1, 1]
 look_back_dict = dict(zip(strategy_name, look_back))
 
 args.to_day = date(int(args.to_day.split('-')[0]), int(args.to_day.split('-')[1]), int(args.to_day.split('-')[2]))
 
 for strat in strategy_name:
-    log = pd.DataFrame(0, index=market.loc[args.from_day:args.to_day].index,
-                       columns=['cost', 'reservoir', 'evaluate', 'volume'])
+    log = pd.DataFrame(0, index=pd.DatetimeIndex(set(market.loc[args.from_day:args.to_day].index)),
+                       columns=['cost', 'reservoir', 'evaluate', 'volume']).sort_index()
     log['goal'] = linspace(0, end_goal, len(log), dtype=int)
     strategy(market, strat)

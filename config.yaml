@@ -1,6 +1,6 @@
 base_path: ./input/
 train_file: train.h5
 default_key: data
-window: 10
+window: 20
 predict_length: 3
 embed: ['none', 'fasttext', 'spacy', 'elmo']

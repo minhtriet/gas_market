@@ -73,7 +73,7 @@ def read_spot_market_v2(market):
     df['Tradingday'] = pd.to_datetime(df['Tradingday'], format='%m/%d/%y')
     df = df.set_index(pd.DatetimeIndex(df['Tradingday']))
     df = df.rename(columns={market: 'price'})
-    return df
+    return pd.DataFrame(df['price'])
 
 
 def read_future_market_v2(market):
