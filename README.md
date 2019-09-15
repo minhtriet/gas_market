@@ -26,7 +26,7 @@ We propose an approach to predict the natural gas price in several days using hi
 | 2011-09-14T00:00Z | Gas Flaring in North Dakota                                |
 
 ### Train
-``
+`python train_event.py`
 
 ### Excute the strategy
-`strategy_excution_event.py --from_day 2018-01-01 --to_day 2018-10-01`
+`python strategy_excution_event.py --from_day 2018-01-01 --to_day 2018-10-01`
