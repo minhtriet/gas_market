@@ -7,10 +7,26 @@ We propose an approach to predict the natural gas price in several days using hi
 
 ## Installation
 ### Input
-1. News: A CSV file with the following format
+1. News: A CSV file with the following format, put it in 
+
+| date       | price  |
+|------------|--------|
+| 02.07.2007 | 18.700 |
+| 03.07.2007 | 19.510 |
+| 04.07.2007 | 19.150 |
+| 05.07.2007 | 21.700 |
 
 2. Price: A CSV file with the following format
 
-### Test
+| pub_date          | info                                                       |
+|-------------------|------------------------------------------------------------|
+| 2011-09-05T00:00Z | China Challenges U.S. Supremacy in Shale Gas               |
+| 2011-09-07T00:00Z | Flow Starts in Gas Pipeline From Russia to Germany         |
+| 2011-09-08T00:00Z | European Union Seeks Power to Block Bilateral Energy Deals |
+| 2011-09-14T00:00Z | Gas Flaring in North Dakota                                |
+
+### Train
+``
 
 ### Excute the strategy
+`strategy_excution_event.py --from_day 2018-01-01 --to_day 2018-10-01`
