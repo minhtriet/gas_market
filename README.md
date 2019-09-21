@@ -6,6 +6,10 @@ We propose an approach to predict the natural gas price in several days using hi
 ## Citation
 
 ## Installation
+We use `virtualenv` as the package management
+1. Clone the repository
+2. Install Python3
+3. In the folder directory ``
 ### Input
 1. News: A CSV file with the following format, put it in 
 
@@ -16,7 +20,7 @@ We propose an approach to predict the natural gas price in several days using hi
 | 04.07.2007 | 19.150 |
 | 05.07.2007 | 21.700 |
 
-2. Price: A CSV file with the following format
+2. Price: A CSV file with the following format. Place it in `old_log` folder
 
 | pub_date          | info                                                       |
 |-------------------|------------------------------------------------------------|
@@ -26,10 +30,11 @@ We propose an approach to predict the natural gas price in several days using hi
 | 2011-09-14T00:00Z | Gas Flaring in North Dakota                                |
 
 ### Train
-`python train_event.py`
+`python3 train_event.py`
 
 ### Inference
-
+`python3 strategy_predict.py --from_day from --to_day to` (YYYY-MM-DD format)
 
 ### Excute the strategy
-`python strategy_excution_event.py --from_day 2018-01-01 --to_day 2018-10-01`
+`python3 strategy_excution_event.py --from_day from --to_day to` (YYYY-MM-DD format)
+
