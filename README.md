@@ -36,5 +36,10 @@ We use `virtualenv` as the package management
 `python3 strategy_predict.py --from_day from --to_day to` (YYYY-MM-DD format)
 
 ### Excute the strategy
-`python3 strategy_excution_event.py --from_day from --to_day to` (YYYY-MM-DD format)
+`python3 strategy_excution_event.py [--from_day from] [--to_day to]`
+Arguments
+- `--from_day from`
+(YYYY-MM-DD format)
+- `--to_day to`
+(YYYY-MM-DD format)
 
