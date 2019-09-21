@@ -11,7 +11,7 @@ We use `virtualenv` as the package management
 2. Install Python3
 3. In the folder directory ``
 ### Input
-1. News: A CSV file with the following format, put it in 
+1. News: A CSV file with the following format, put it in input folder. The file used to read this is `read_spot_market_v2` in `util.py`
 
 | date       | price  |
 |------------|--------|
@@ -37,9 +37,11 @@ We use `virtualenv` as the package management
 
 ### Excute the strategy
 `python3 strategy_excution_event.py [--from_day from] [--to_day to]`
+
 Arguments
 - `--from_day from`
-(YYYY-MM-DD format)
+The starting day of the series (YYYY-MM-DD format)
 - `--to_day to`
 (YYYY-MM-DD format)
+The ending day of the series (YYYY-MM-DD format)
 
