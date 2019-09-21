@@ -28,5 +28,8 @@ We propose an approach to predict the natural gas price in several days using hi
 ### Train
 `python train_event.py`
 
+### Inference
+
+
 ### Excute the strategy
 `python strategy_excution_event.py --from_day 2018-01-01 --to_day 2018-10-01`
