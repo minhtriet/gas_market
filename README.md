@@ -9,7 +9,9 @@ We propose an approach to predict the natural gas price in several days using hi
 We use `virtualenv` as the package management
 1. Clone the repository
 2. Install Python3
-3. In the folder directory ``
+3. In the folder directory, run `python3 -m venv venv` to create a virtual environment
+4. Run `source venv/bin/activate`
+5. Run `pip install -r requirements.txt`
 ### Input
 1. News: A CSV file with the following format, put it in input folder. The file used to read this is `read_spot_market_v2` in `util.py`
 
