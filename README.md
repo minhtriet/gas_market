@@ -12,6 +12,8 @@ We use `virtualenv` as the package management
 3. In the folder directory, run `python3 -m venv venv` to create a virtual environment
 4. Run `source venv/bin/activate`
 5. Run `pip install -r requirements.txt`
+6. Install Spacy's English models
+7. Download news headlines
 ### Input
 1. News: A CSV file with the following format, put it in input folder. The file used to read this is `read_spot_market_v2` in `util.py`
 
@@ -35,9 +37,16 @@ We use `virtualenv` as the package management
 `python3 train_event.py`
 
 ### Inference
-`python3 strategy_predict.py --from_day from --to_day to` (YYYY-MM-DD format)
+`python3 strategy_predict.py [--from_day from] [--to_day to]`
 
-### Excute the strategy
+Arguments
+- `--from_day from`
+The starting day of the series (YYYY-MM-DD format)
+- `--to_day to`
+(YYYY-MM-DD format)
+The ending day of the series (YYYY-MM-DD format)
+
+### Execute / mock trading
 `python3 strategy_excution_event.py [--from_day from] [--to_day to]`
 
 Arguments
