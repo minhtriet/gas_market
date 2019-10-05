@@ -3,7 +3,7 @@ import json
 from pandas import date_range
 import argparse
 
-headers = {"X-Api-Key": '59cbaf20e3e06d3565778e7b5f5d8279fae3456f9a60522e36c378fc', 'Content-Type': 'application/json'}
+headers = {"X-Api-Key": '...', 'Content-Type': 'application/json'}
 
 argparse.ArgumentParser(description='download news arg parser')
 parser = argparse.ArgumentParser(description='buying strategy parsing')
