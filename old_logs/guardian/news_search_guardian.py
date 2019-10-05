@@ -14,7 +14,7 @@ drange = date_range(args.from_day, args.to_day, freq='M')
 for i in drange:
     r = ''
     for p in [1, 2]:
-        payload = {'api-key': 'f8606514-bab9-450d-aa9f-ff60de1ae5b7', 'page-size': 200,
+        payload = {'api-key': '...-...-...-...-ff...', 'page-size': 200,
                    'from-date': i.replace(day=1).date(), 'type': 'article',
                    'to-date': i.date(), 'q': 'gas', 'page': p}
         r2 = requests.get('https://content.guardianapis.com/search', params=payload).json()
