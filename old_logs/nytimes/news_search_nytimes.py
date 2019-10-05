@@ -4,7 +4,7 @@ import requests
 from pandas import date_range
 
 
-payload = {'api-key': '9517df6b869847dc9b3e84266a7493a6'}
+payload = {'api-key': '...'}
 
 argparse.ArgumentParser(description='download news arg parser')
 parser = argparse.ArgumentParser(description='buying strategy parsing')
