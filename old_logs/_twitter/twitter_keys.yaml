@@ -1,5 +1,5 @@
 search_tweets_api:
   account_type: premium
   endpoint: https://api.twitter.com/1.1/tweets/search/fullarchive/dev.json
-  consumer_key: Nixtv8BlUH5w4lGI3FCbqEJ9J
-  consumer_secret: uAXbtEPAnYtekMLRGWJzM99U29MJXIyKtipahd5dQ6mmU6R10A
+  consumer_key: Nixtv...
+  consumer_secret: uAXbtEPA...
