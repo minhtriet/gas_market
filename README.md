@@ -56,3 +56,6 @@ The starting day of the series (YYYY-MM-DD format)
 (YYYY-MM-DD format)
 The ending day of the series (YYYY-MM-DD format)
 
+### Generate Venn Graphs
+Note that Reverb needs an period at the end of each headlines to extract relation from them
+```cat real_reverb_result.txt | cut -f2 | uniq > reverb_indicies.txt```
