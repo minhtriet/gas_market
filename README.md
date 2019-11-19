@@ -58,4 +58,7 @@ The ending day of the series (YYYY-MM-DD format)
 
 ### Generate Venn Graphs
 Note that Reverb needs an period at the end of each headlines to extract relation from them
+- To get sentences that have Verbs
 ```cat real_reverb_result.txt | cut -f2 | uniq > reverb_indicies.txt```
+- For our pipelines
+```./testPlain.bash models-MUN-SC-wn30 test.txt outputFile lib/dict/index.sense```
