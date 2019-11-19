@@ -87,6 +87,7 @@ def _informative_filter(split):
 
 
 def pipeline(sent):
+    sent = sent.rstrip()
     print(sent)
     clauses, phrases = _extract(sent)
     if len(phrases) > 0:
