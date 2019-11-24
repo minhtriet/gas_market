@@ -5,7 +5,8 @@ Note that REVERB sentence order in output is not similar to the input, we use a 
 ```bash
 cat -n headlines_uniq.txt > headlines_uniq_nl.txt
 java -Xmx512m -jar reverb-latest.jar headlines_uniq_nl.txt > real_reverb_result.txt
-cat real_reverb_result.txt | cut -f1 -d " " | uniq > reverb_uniq.tx
+cat real_reverb_result.txt | cut -f13 | uniq  > reverb_uniq.txt
+cat reverb_uniq.txt | cut -f1 -d " " | uniq > reverb_index_uniq.txt
 ```
   
 2. Generate result of sentences with verbs
