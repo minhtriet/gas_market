@@ -12,19 +12,20 @@ args = parser.parse_args()
 
 drange = date_range(args.from_day, args.to_day, freq='M')
 for i in drange:
+    print(i)
     r = ''
-    for p in [1, 2]:
-        payload = {'api-key': '...-...-...-...-ff...', 'page-size': 200,
+    for p in range(1,10):
+        payload = {'api-key': '...-...-...-...-...', 'page-size': 200,
                    'from-date': i.replace(day=1).date(), 'type': 'article',
-                   'to-date': i.date(), 'q': 'natural gas', 'page': p}
+                   'to-date': i.date(), 'q': 'gas', 'page': p}
         r2 = requests.get('https://content.guardianapis.com/search', params=payload).json()
         if p == 1:
             r = r2
         else:
-            try:
+            if r2['response'].get('result'):
                 r['response']['results'].extend(r2['response']['results'])
-            except KeyError:
-                print(r2)
+            else:
+                break
     with open('g_news_%s.json' % i.date(), 'w', encoding='utf-8') as outfile:
         print('g_news_%s.json' % i.date())
         outfile.write(json.dumps(r))
