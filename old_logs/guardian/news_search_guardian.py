@@ -16,7 +16,7 @@ for i in drange:
     for p in [1, 2]:
         payload = {'api-key': '...-...-...-...-ff...', 'page-size': 200,
                    'from-date': i.replace(day=1).date(), 'type': 'article',
-                   'to-date': i.date(), 'q': 'gas', 'page': p}
+                   'to-date': i.date(), 'q': 'natural gas', 'page': p}
         r2 = requests.get('https://content.guardianapis.com/search', params=payload).json()
         if p == 1:
             r = r2
