@@ -6,6 +6,20 @@ Our paper is accepted to CEUR Workshop, 2020 (http://ceur-ws.org/Vol-2611/paper2
 We propose an approach to predict the natural gas price in several days using historical price data and events from news headlines. Our event extraction method detects not only the occurrence of phenomenons but also the changes in attribution and characteristics. It also serves as one of the preliminaries for a knowledge graph for real-time events. Instead of using sentences embedding as a feature, we use every word of the extracted events, encode and organize them before feeding to the learning models. Empirical results show favorable results, in term of prediction performance, money saved and scalability.
 
 ## Citation
+```
+@article{DBLP:journals/corr/abs-1912-11334,
+  author    = {Minh Triet Chau and
+               Diego Esteves and
+               Jens Lehmann},
+  title     = {Open-domain Event Extraction and Embedding for Natural Gas Market
+               Prediction},
+  journal   = {Proceedings of the 1st International Workshop on Cross-lingual Event-centric Open Analytics
+co-located with the 17th Extended Semantic Web Conference (ESWC 2020)},
+  volume    = {2611},
+  year      = {2020},
+  url       = {http://ceur-ws.org/Vol-2611/} 
+}
+```
 
 ## Installation
 We use `virtualenv` as the package management
